@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mridanga Bolvanis</title>
+<style>
+:root{--surface-1:#f5f4ef;--surface-2:#fff;--text-primary:#1a1a18;--text-secondary:#5f5e5a;--border:#d3d1c7;--border-strong:#888780;--radius:8px}
+@media (prefers-color-scheme: dark){
+:root{--surface-1:#2c2c2a;--surface-2:#1a1a18;--text-primary:#f1efe8;--text-secondary:#b4b2a9;--border:#444441;--border-strong:#888780}
+}
+body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:system-ui,sans-serif}
+.kb-app{display:flex;min-height:100vh}
+.kb-nav{box-sizing:border-box;flex:none;width:250px;height:100vh;position:sticky;top:0;overflow-y:auto;padding:12px 8px;background:var(--surface-1);border-right:1px solid var(--border)}
+.kb-nav button{display:block;width:100%;border:0;border-radius:var(--radius);padding:10px 12px;background:transparent;color:var(--text-primary);cursor:pointer;font:inherit;font-size:15px;line-height:1.35;text-align:left}
+.kb-nav button[aria-current=true]{background:var(--surface-2);font-weight:500}
+.kb-nav h2{margin:16px 12px 4px;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary)}
+.kb-nav h2:first-child{margin-top:4px}
+.kb-shade{display:none}
+.kb{box-sizing:border-box;flex:1;min-width:0;max-width:584px;margin:0 auto;padding:12px}
+.kb-top button,.kb-ctl button{background:var(--surface-2);border:1px solid var(--border-strong);border-radius:var(--radius);padding:0 10px;min-width:42px;min-height:42px;color:var(--text-primary);cursor:pointer;font:inherit;font-size:16px}
+.kb-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.kb-top h1{margin:0;font-size:17px;font-weight:500;line-height:1.3}
+#kb-menu{display:none}
+/* Phone, upright or on its side: the list becomes a drawer that slides in from the left */
+@media (max-width:760px),(max-height:500px){
+#kb-menu{display:block}
+.kb-nav{position:fixed;left:0;z-index:2;width:min(82vw,300px);visibility:hidden;transform:translateX(-100%);transition:transform .2s,visibility .2s}
+.nav-open .kb-nav{visibility:visible;transform:none}
+.nav-open .kb-shade{display:block;position:fixed;inset:0;z-index:1;background:rgba(0,0,0,.4)}
+}
+.kb-chips{display:flex;flex-wrap:wrap;gap:6px 12px}
+.kb-word{display:flex;gap:3px}
+.kb-br{flex-basis:100%}
+.kb-chip{box-sizing:border-box;display:flex;flex-wrap:wrap;align-content:flex-start;width:52px;border:1px solid var(--border);border-radius:var(--radius);padding:5px 1px;background:none;cursor:pointer;font:inherit;text-align:center;font-size:11px;line-height:1.3;color:var(--text-secondary);scroll-margin-top:8px}
+.kb-chip.w{width:107px}
+.kb-chip b{width:100%;font-size:15px;font-weight:500;color:var(--text-primary)}
+.kb-chip span{flex:1}
+.kb-chip.io{border-color:#1D9E75}
+.kb-chip.c{background:#FAECE7;border-color:#D85A30;color:#993C1D}
+.kb-chip.c b{color:#712B13}
+.kb-chip.o{background:#E1F5EE;border-color:#1D9E75;color:#0F6E56}
+.kb-chip.o b{color:#085041}
+/* Both hands, one open and one closed: left half shows the left hand, right half the right hand */
+.kb-chip.oc,.kb-chip.co{border-color:#888780;color:#444441}
+.kb-chip.oc{background:linear-gradient(90deg,#E1F5EE 50%,#FAECE7 50%)}
+.kb-chip.co{background:linear-gradient(90deg,#FAECE7 50%,#E1F5EE 50%)}
+.kb-chip.oc b,.kb-chip.co b{color:#1a1a18}
+.kb-chip.r{background:var(--surface-1);border-color:var(--border-strong)}
+/* Hands and controls stay pinned to the bottom while a long bolvani scrolls above them */
+.kb-stage{position:sticky;bottom:0;background:var(--surface-2);margin:0 -12px;padding:0 12px 8px}
+/* Phone on its side: strokes on the left, hands pinned on the right and sized to fit the screen height */
+@media (max-height:500px){
+.kb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,45%);grid-template-rows:auto 1fr;column-gap:16px;align-items:start;max-width:none}
+.kb-stage{grid-column:2;grid-row:1/3;top:0;bottom:auto;margin:0;padding:0}
+.kb-stage>svg{max-height:calc(100vh - 70px);max-height:calc(100dvh - 70px)}
+}
+.kb-stage>svg{display:block;margin-top:4px}
+.kb-head{fill:var(--surface-1);stroke:var(--border-strong);stroke-width:1.5}
+.kb-gab{fill:var(--text-secondary);opacity:.3}
+.kb-h rect{fill:var(--surface-2);stroke:var(--text-secondary);stroke-width:1.5}
+.kb-h[data-p=fingers] .kf,.kb-h[data-p=three] .k3,.kb-h[data-p=one] .k1,.kb-h[data-p=thumb] .kt,.kb-h[data-p=hand] rect{fill:color-mix(in srgb,var(--kf) var(--ka),var(--surface-2));stroke:color-mix(in srgb,var(--ks) var(--ka),var(--text-secondary))}
+.kb-ctl{margin-top:8px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
+.kb-ctl input{flex:1;min-width:0}
+.kb-ctl svg{display:block;width:20px;height:20px;fill:currentColor}
+.kb-step{display:flex;gap:4px}
+.kb-ctl button:disabled{opacity:.35;cursor:default}
+</style>
+</head>
+<body>
+
+<div class="kb-app">
+<nav class="kb-nav" id="kb-nav" aria-label="Bolvanis"></nav>
+<div class="kb-shade" id="kb-shade"></div>
+<main class="kb">
+<div class="kb-top">
+<button id="kb-menu" aria-label="Bolvani list" aria-expanded="false">&#9776;</button>
+<h1 id="kb-title"></h1>
+</div>
+<div class="kb-chips" id="kb-chips"></div>
+<div class="kb-stage">
+<svg width="100%" viewBox="60 25 495 300" role="img" aria-label="Hands striking the two heads of a mridanga">
+<circle class="kb-head" cx="190" cy="150" r="85"/>
+<circle class="kb-gab" cx="190" cy="150" r="42"/>
+<circle id="kb-tL" cx="190" cy="150" r="85" fill="#D85A30" opacity="0"/>
+<circle id="kb-rL" cx="190" cy="150" r="85" fill="none" stroke="#1D9E75" stroke-width="2" opacity="0"/>
+<circle class="kb-head" cx="430" cy="150" r="48"/>
+<circle class="kb-gab" cx="430" cy="150" r="24"/>
+<circle id="kb-tR" cx="430" cy="150" r="48" fill="#D85A30" opacity="0"/>
+<circle id="kb-rR" cx="430" cy="150" r="48" fill="none" stroke="#1D9E75" stroke-width="2" opacity="0"/>
+<g id="kb-hL" class="kb-h" transform="translate(190,145) scale(-0.85,0.85)">
+<rect class="kf" x="-38" y="-62" width="17" height="74" rx="8.5"/>
+<rect class="kf" x="-18.3" y="-70" width="17" height="82" rx="8.5"/>
+<rect class="kf" x="1.3" y="-64" width="17" height="76" rx="8.5"/>
+<rect class="kf" x="21" y="-48" width="17" height="60" rx="8.5"/>
+<rect class="kt" x="-10" y="-58" width="20" height="66" rx="10" transform="translate(-34,50) rotate(-42)"/>
+<rect x="-38" y="0" width="76" height="82" rx="20"/>
+</g>
+<g id="kb-hR" class="kb-h" transform="translate(430,177) scale(0.85)">
+<rect class="kf k1" x="-38" y="-62" width="17" height="74" rx="8.5"/>
+<rect class="kf k3" x="-18.3" y="-70" width="17" height="82" rx="8.5"/>
+<rect class="kf k3" x="1.3" y="-64" width="17" height="76" rx="8.5"/>
+<rect class="kf k3" x="21" y="-48" width="17" height="60" rx="8.5"/>
+<rect class="kt" x="-10" y="-58" width="20" height="66" rx="10" transform="translate(-34,50) rotate(-42)"/>
+<rect x="-38" y="0" width="76" height="82" rx="20"/>
+</g>
+</svg>
+<div class="kb-ctl">
+<div class="kb-step">
+<button id="kb-prev" aria-label="Previous stroke"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+<button id="kb-btn"></button>
+<button id="kb-next" aria-label="Next stroke"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+</div>
+<span>Slow</span>
+<input type="range" id="kb-sp" min="0" max="100" value="23" aria-label="Speed">
+<span>Fast</span>
+</div>
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+const S=0.85,el=function(i){return document.getElementById(i)};
+// Hand positions: F = fingers on right head, T = thumb on right head, N = index finger on right head, K = left hand flat on left head,
+// G = left fingers on the lower part of the left head with the palm off the drum (open stroke)
+const F={x:430,y:177,r:0},T={x:489,y:156,r:20},N={x:455,y:190,r:0},K={x:190,y:145,r:0},G={x:190,y:215,r:0};
+const HAND={L:'Left',R:'Right'},PART={fingers:'4 fingers',three:'3 fingers',one:'1 finger',thumb:'thumb',hand:'hand'};
+function hit(hand,part,open,pose){return{hand:hand,part:part,open:open,pose:pose}}
+const TE=hit('R','fingers',false,F),RE=hit('R','thumb',false,T),TA=hit('R','fingers',true,F),
+T3=hit('R','three',false,F),N1=hit('R','one',true,N),
+KHE=hit('L','hand',false,K),GHE=hit('L','fingers',true,G);
+// Syllables: name shown, then the hits. Two hits = both hands together (left hit first). No hits = a wait.
+const SYL={
+te:['Te',TE],re:['Re',RE],khe:['Khe',KHE],ta:['Ta',TA],
+kho:['Kho',KHE],
+ghe:['Ghe',GHE],ghi:['Ghi',GHE],ga:['Ga',GHE],na:['Na',N1],
+de:['De',GHE,TE],dhi:['Dhi',GHE,T3],
+jha:['Jha',GHE,N1],da:['Da',GHE,N1],
+takhe:['Ta',KHE,TA],
+// From class 14 on: Te = 3 fingers, Re = index finger, Ta = 3 fingers open
+te3:['Te',T3],re1:['Re',hit('R','one',false,N)],ta3:['Ta',hit('R','three',true,F)],
+// The second Te of kaharwa (Da ghi te te) adds the left hand
+te1:['Te',KHE,hit('R','one',false,N)],
+_:['–']};
+// Pench pieces are played twice: starting on Jha, then the same starting on Ta (right open + left closed).
+function jt(p){return p+' / '+p.replace(/jha/g,'takhe')}
+// One syllable per beat. Hyphens join syllables into a word, "/" starts a new line, "_" is a wait.
+// [name in the list, strokes]; an entry with only a name is a heading. Add a line here for a new one.
+const BOLS=[
+['Bolvanis'],
+['1. Te re khe ta','te-re khe-ta'],
+['2. Tere tere kheta','te-re te-re khe-ta'],
+['3. Tere kheta, tere tere kheta','te-re khe-ta / te-re te-re khe-ta'],
+['4. Tere tere tere kheta','te-re te-re te-re khe-ta'],
+['5. Tere tere kheta, tere kheta tere kheta','te-re te-re khe-ta / te-re khe-ta te-re khe-ta'],
+['6. Tere tere kheta takho','te-re te-re khe-ta ta-kho'],
+['7. Takho takho tere kheta','ta-kho ta-kho te-re khe-ta'],
+['8. Takho tere kheta ×2, tere kheta','ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta'],
+['9. Ghe te te','ghe te te'],
+['10. Kheta takho tere kheta','khe-ta ta-kho te-re khe-ta'],
+['11. Tere tere kheta, takho tere kheta','te-re te-re khe-ta / ta-kho te-re khe-ta'],
+['12. Takho takho takho, takho tere kheta','ta-kho ta-kho ta-kho / ta-kho te-re khe-ta'],
+['13. De re ghe na','de-re ghe-na'],
+['14. Tere ghena, dere ghena ×2, tere kheta','te-re ghe-na / de-re ghe-na / de-re ghe-na / te-re khe-ta'],
+['Pench'],
+['Class 9 · Jha – tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta')],
+['Class 10 · adds takho takho tere kheta ×2',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta')],
+['Class 11 · adds tere kheta, tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta / te-re te-re khe-ta / ta-kho te-re khe-ta')],
+['Class 12 · Jha jha jha jha, tere kheta tere kheta',jt('jha jha jha jha / te-re khe-ta te-re khe-ta')],
+['Class 12 · Jha tere kheta ×2, tere kheta',jt('jha te-re khe-ta / jha te-re khe-ta / te-re khe-ta')],
+['Class 13 · Jha takho tere kheta',jt('jha ta-kho te-re khe-ta / ta-kho ta-kho / te-re khe-ta / ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta')],
+['Class 13 · Jha jha jha jha, tere tere tere tere',jt('jha jha jha jha / te-re te-re te-re te-re / khe-ta ta-kho te-re khe-ta / te-re khe-ta te-re khe-ta')],
+['Kaharwa'],
+['Class 14 · Da ghi te te, na ga dhi na','da ghi te3 te1 / na ga dhi na'],
+['Class 16 · Tere kheta jha ×2, tere kheta','te3-re1 khe-ta3 jha / te3-re1 khe-ta3 jha / te3-re1 khe-ta3'],
+['Class 16 · Da ghi tere kheta, na ga dhi na','da ghi te3-re1 khe-ta3 / na ga dhi na']];
+const bols=BOLS.filter(function(b){return b[1]});
+// step = the one stroke being repeated, or -1 when the whole bolvani runs
+let strokes=[],beats=[],L=4,ph=-0.3,chips=[],shown=-2,step=-1;
+// Closed: press and hold 0.3 beat, then lift slowly over 0.4 beat. Open: snap back in 0.12 beat.
+// ponytail: assumes one syllable per beat, so same-hand strokes are at least one beat apart; rework the lift timing for half-beat strokes
+function keys(h){
+const ss=strokes.filter(function(s){return s.hand===h}),kf=[];
+if(!ss.length)return null;
+ss.forEach(function(s,i){
+const n=ss[(i+1)%ss.length],tn=n.t+(i+1<ss.length?0:L);
+kf.push({t:s.t,lift:0,s:s,e:'in'});
+if(s.open)kf.push({t:s.t+0.12,lift:1,s:s,e:'out'});
+else kf.push({t:s.t+0.3,lift:0,s:s},{t:s.t+0.7,lift:1,s:s});
+kf.push({t:tn-0.3,lift:1,s:s});
+});
+kf.push({t:ss[0].t+L,lift:0,s:ss[0],e:'in'});
+return kf;
+}
+function at(h,t){
+const kf=h.kf;
+if(!kf)return{lift:1,x:h.rest.x,y:h.rest.y,r:0,s:null};
+let tt=t<kf[0].t?t+L:t,i=0;
+while(tt>=kf[i+1].t)i++;
+const a=kf[i],b=kf[i+1],p=(tt-a.t)/(b.t-a.t);
+const e=b.e==='in'?p*p:b.e==='out'?1-(1-p)*(1-p):p;
+const m=p*p*(3-2*p),A=a.s.pose,B=b.s.pose;
+return{lift:a.lift+(b.lift-a.lift)*e,x:A.x+(B.x-A.x)*m,y:A.y+(B.y-A.y)*m,r:A.r+(B.r-A.r)*m,s:b.s};
+}
+const hands={
+L:{g:el('kb-hL'),tint:el('kb-tL'),ring:el('kb-rL'),R0:85,m:-1,rest:K},
+R:{g:el('kb-hR'),tint:el('kb-tR'),ring:el('kb-rR'),R0:48,m:1,rest:F}};
+const chipBox=el('kb-chips'),nav=el('kb-nav'),menu=el('kb-menu');
+const stage=document.querySelector('.kb-stage');
+// Where a stroke box sits on screen: [top, bottom, lowest visible point].
+function span(c){
+const r=c.getBoundingClientRect(),s=stage.getBoundingClientRect();
+// Upright, the pinned hands cover the bottom of the screen; with the phone on its side they sit beside the strokes.
+return[r.top,r.bottom,s.left>r.left?innerHeight:Math.min(innerHeight,s.top)];
+}
+// Follow the playing stroke a page at a time: when its row runs off, that row jumps to the top.
+function follow(i,prev){
+if(!chips[i])return;
+const c=span(chips[i]),p=chips[prev]&&span(chips[prev]);
+// Leave the page alone if the stroke is readable, or if the reader had scrolled away from the one before it.
+if(c[1]>0&&c[1]<=c[2]||p&&(p[1]<=0||p[0]>=p[2]))return;
+if(i)chips[i].scrollIntoView();else scrollTo(0,0);
+}
+function draw(ph){
+Object.keys(hands).forEach(function(k){
+const h=hands[k],v=at(h,ph),sc=S*(1+0.22*v.lift),col=v.s&&v.s.open?['#1D9E75','#0F6E56']:['#D85A30','#993C1D'];
+h.g.setAttribute('transform','translate('+v.x+','+v.y+') rotate('+v.r+') scale('+(h.m*sc)+','+sc+')');
+h.g.setAttribute('opacity',1-0.5*v.lift);
+h.g.dataset.p=v.s?v.s.part:'';
+h.g.style.setProperty('--kf',col[0]);
+h.g.style.setProperty('--ks',col[1]);
+// Colour is full on the drum and fades back to white as the hand lifts
+let ka=1-Math.pow(v.lift,3);
+h.tint.setAttribute('fill',col[0]);
+h.tint.setAttribute('opacity',0.3*Math.pow(1-v.lift,4));
+let ro=0,rr=h.R0;
+if(ph>=0)strokes.forEach(function(s){
+if(s.hand===k&&s.open&&(step<0||s.t===step)){const d=((ph-s.t)%L+L)%L;if(d<0.9){ro=1-d/0.9;rr=h.R0+36*d/0.9;}
+// An open hand leaves at once, but its colour lasts as long as a closed stroke's: full for 0.3 beat, gone by 0.7
+if(d<0.7)ka=Math.max(ka,d<0.3?1:1-Math.pow((d-0.3)/0.4,3));}
+});
+h.g.style.setProperty('--ka',100*ka+'%');
+h.ring.setAttribute('r',rr);
+h.ring.setAttribute('opacity',ro);
+});
+const i=step>=0?step:Math.floor(ph);
+if(i===shown)return;
+const prev=shown;
+shown=i;
+chips.forEach(function(c,j){c.className=beats[j].base+(j===i?' '+beats[j].on:'')});
+follow(i,prev);
+}
+function openNav(on){document.body.classList.toggle('nav-open',on);menu.setAttribute('aria-expanded',on);}
+nav.innerHTML=BOLS.map(function(b){return b[1]?'<button>'+b[0]+'</button>':'<h2>'+b[0]+'</h2>'}).join('');
+const navBtns=Array.from(nav.querySelectorAll('button'));
+function setBol(i){
+navBtns.forEach(function(b,j){b.setAttribute('aria-current',j===i)});
+el('kb-title').textContent=navBtns[i].textContent;
+openNav(false);
+beats=[];strokes=[];
+chipBox.innerHTML=bols[i][1].split(' ').map(function(w){
+if(w==='/')return '<div class="kb-br"></div>';
+return '<div class="kb-word">'+w.split('-').map(function(k){
+const s=SYL[k];
+console.assert(s,'unknown syllable '+k);
+const hits=s.slice(1),t=beats.length,o=hits.filter(function(x){return x.open}).length;
+hits.forEach(function(x){strokes.push(Object.assign({t:t},x))});
+beats.push({base:'kb-chip'+(hits.length>1?' w':'')+(o?' io':''),on:!hits.length?'r':o===hits.length?'o':!o?'c':hits[0].open?'oc':'co'});
+return '<button class="kb-chip"><b>'+s[0]+'</b>'+(hits.map(function(x){return '<span>'+HAND[x.hand]+'<br>'+PART[x.part]+'<br>'+(x.open?'open':'closed')+'</span>'}).join('')||'<span>wait</span>')+'</button>';
+}).join('')+'</div>';
+}).join('');
+L=beats.length;ph=-0.3;shown=-2;step=-1;
+hands.L.kf=keys('L');hands.R.kf=keys('R');
+chips=Array.from(chipBox.querySelectorAll('.kb-chip'));
+scrollTo(0,0);
+draw(ph);
+}
+navBtns.forEach(function(b,j){b.onclick=function(){playing=!calm;sync();setBol(j)}});
+menu.onclick=function(){openNav(!document.body.classList.contains('nav-open'))};
+el('kb-shade').onclick=function(){openNav(false)};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')openNav(false)});
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let last=0,playing=!calm;
+const btn=el('kb-btn'),sp=el('kb-sp');
+const ICON={Play:'M8 5v14l11-7z',Pause:'M6 5h4v14H6zM14 5h4v14h-4z'};
+function sync(){
+const n=playing?'Pause':'Play';
+btn.setAttribute('aria-label',n);
+// Stepping is for when the bolvani is not running
+el('kb-prev').disabled=el('kb-next').disabled=playing;
+btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+ICON[n]+'"/></svg>';
+}
+// Pause does not freeze: it keeps repeating the stroke it stopped on
+btn.onclick=function(){if(playing&&step<0)step=Math.max(0,Math.floor(ph));playing=!playing;sync();};
+// Picking one stroke repeats just that stroke; Play then carries on from it.
+function select(i){step=(i+L)%L;playing=false;ph=step-0.3;sync();draw(ph);}
+function cur(){return step>=0?step:Math.floor(ph)}
+el('kb-prev').onclick=function(){select(Math.max(cur(),0)-1)};
+el('kb-next').onclick=function(){select(cur()+1)};
+chipBox.onclick=function(e){const c=e.target.closest('.kb-chip');if(c)select(chips.indexOf(c))};
+document.addEventListener('keydown',function(e){
+if(e.target===sp)return;
+if(e.key==='ArrowLeft')el('kb-prev').click();
+if(e.key==='ArrowRight')el('kb-next').click();
+});
+function frame(now){
+if(playing||step>=0){
+// Slider 0..100 maps to 30..600 strokes per minute on a log scale, so the slow end keeps fine control.
+ph+=Math.min(now-last,100)/(60000/(30*Math.pow(20,sp.value/100)));
+// One stroke repeats from its approach (0.3 beat before) to the end of its lift (0.7 after).
+// After Play it runs on, and the stroke stays marked until the hand lands.
+if(step<0){if(ph>=L)ph-=L}
+else if(!playing){if(ph>=step+0.7)ph-=1}
+else if(ph>=step)step=-1;
+draw(ph);
+}
+last=now;requestAnimationFrame(frame);
+}
+sync();setBol(0);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
