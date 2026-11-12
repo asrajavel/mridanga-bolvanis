@@ -10,14 +10,15 @@
 :root{--surface-1:#2c2c2a;--surface-2:#1a1a18;--text-primary:#f1efe8;--text-secondary:#b4b2a9;--border:#444441;--border-strong:#888780}
 }
 body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:system-ui,sans-serif}
-.mb-app{display:flex;min-height:100vh}
+/* The page itself never scrolls: the app fills the screen and only the stroke boxes scroll, inside their own area */
+.mb-app{display:flex;height:100vh;height:100dvh}
 .mb-nav{box-sizing:border-box;flex:none;width:250px;height:100vh;position:sticky;top:0;overflow-y:auto;padding:12px 8px;background:var(--surface-1);border-right:1px solid var(--border)}
 .mb-nav button{display:block;width:100%;border:0;border-radius:var(--radius);padding:10px 12px;background:transparent;color:var(--text-primary);cursor:pointer;font:inherit;font-size:15px;line-height:1.35;text-align:left}
 .mb-nav button[aria-current=true]{background:var(--surface-2);font-weight:500}
 .mb-nav h2{margin:16px 12px 4px;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary)}
 .mb-nav h2:first-child{margin-top:4px}
 .mb-shade{display:none}
-.mb{box-sizing:border-box;flex:1;min-width:0;max-width:584px;margin:0 auto;padding:12px}
+.mb{box-sizing:border-box;flex:1;min-width:0;max-width:584px;height:100%;margin:0 auto;padding:12px;display:flex;flex-direction:column}
 .mb-top button,.mb-ctl button{background:var(--surface-2);border:1px solid var(--border-strong);border-radius:var(--radius);padding:0 10px;min-width:42px;min-height:42px;color:var(--text-primary);cursor:pointer;font:inherit;font-size:16px}
 .mb-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .mb-top h1{margin:0;font-size:17px;font-weight:500;line-height:1.3}
@@ -29,7 +30,7 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .nav-open .mb-nav{visibility:visible;transform:none}
 .nav-open .mb-shade{display:block;position:fixed;inset:0;z-index:1;background:rgba(0,0,0,.4)}
 }
-.mb-chips{display:flex;flex-wrap:wrap;gap:6px 8px}
+.mb-chips{display:flex;flex-wrap:wrap;gap:6px 8px;flex:1;min-height:0;overflow-y:auto;align-content:flex-start;padding:1px}
 .mb-word{display:flex;gap:3px}
 .mb-br{flex-basis:100%}
 .mb-leg{flex-basis:100%;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
@@ -44,15 +45,15 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .mb-chips .kc{fill:#D85A30}
 .mb-chips .ko{fill:none;stroke:#1D9E75;stroke-width:1.5}
 .mb-chip.on{background:var(--surface-1);border-color:var(--text-primary);box-shadow:0 0 0 1px var(--text-primary)}
-/* Hands and controls stay pinned to the bottom while a long bolvani scrolls above them */
-.mb-stage{position:sticky;bottom:0;background:var(--surface-2);margin:0 -12px;padding:0 12px 8px}
-/* Phone on its side: strokes on the left, hands pinned on the right and sized to fit the screen height */
+/* Hands and controls always sit at the bottom, in the same place for every bolvani */
+.mb-stage{flex:none}
+.mb-stage>svg{display:block;margin-top:4px;max-height:38vh;max-height:38dvh}
+/* Phone on its side: strokes on the left, hands fixed on the right and sized to fit the screen height */
 @media (max-height:500px){
-.mb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,45%);grid-template-rows:auto 1fr;column-gap:16px;align-items:start;max-width:none}
-.mb-stage{grid-column:2;grid-row:1/3;top:0;bottom:auto;margin:0;padding:0}
-.mb-stage>svg{max-height:calc(100vh - 70px);max-height:calc(100dvh - 70px)}
+.mb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,45%);grid-template-rows:auto minmax(0,1fr);column-gap:16px;max-width:none}
+.mb-stage{grid-column:2;grid-row:1/3;align-self:start}
+.mb-stage>svg{max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px)}
 }
-.mb-stage>svg{display:block;margin-top:4px}
 .mb-head{fill:var(--surface-1);stroke:var(--border-strong);stroke-width:1.5}
 .mb-gab{fill:var(--text-secondary);opacity:.3}
 .mb-h rect{fill:var(--surface-2);stroke:var(--text-secondary);stroke-width:1.5}
@@ -204,12 +205,10 @@ const hands={
 L:{g:el('mb-hL'),tint:el('mb-tL'),ring:el('mb-rL'),R0:85,m:-1,rest:K},
 R:{g:el('mb-hR'),tint:el('mb-tR'),ring:el('mb-rR'),R0:48,m:1,rest:F}};
 const chipBox=el('mb-chips'),nav=el('mb-nav'),menu=el('mb-menu');
-const stage=document.querySelector('.mb-stage');
-// Where a stroke box sits on screen: [top, bottom, lowest visible point].
+// Where a stroke box sits inside the scrolling stroke area: [top, bottom, height of the area].
 function span(c){
-const r=c.getBoundingClientRect(),s=stage.getBoundingClientRect();
-// Upright, the pinned hands cover the bottom of the screen; with the phone on its side they sit beside the strokes.
-return[r.top,r.bottom,s.left>r.left?innerHeight:Math.min(innerHeight,s.top)];
+const r=c.getBoundingClientRect(),b=chipBox.getBoundingClientRect();
+return[r.top-b.top,r.bottom-b.top,b.height];
 }
 // Follow the playing stroke a page at a time: when its row runs off, that row jumps to the top.
 function follow(i,prev){
@@ -217,7 +216,7 @@ if(!chips[i])return;
 const c=span(chips[i]),p=chips[prev]&&span(chips[prev]);
 // Leave the page alone if the stroke is readable, or if the reader had scrolled away from the one before it.
 if(c[1]>0&&c[1]<=c[2]||p&&(p[1]<=0||p[0]>=p[2]))return;
-if(i)chips[i].scrollIntoView();else scrollTo(0,0);
+if(i)chips[i].scrollIntoView();else chipBox.scrollTop=0;
 }
 function draw(ph){
 Object.keys(hands).forEach(function(k){
@@ -260,7 +259,13 @@ const LEG='<div class="mb-leg"><svg viewBox="0 0 12 12" aria-hidden="true"><rect
 function openNav(on){document.body.classList.toggle('nav-open',on);menu.setAttribute('aria-expanded',on);}
 nav.innerHTML=BOLS.map(function(b){return b[1]?'<button>'+b[0]+'</button>':'<h2>'+b[0]+'</h2>'}).join('');
 const navBtns=Array.from(nav.querySelectorAll('button'));
+// The address ends in #7 for the 7th piece in the list, so a link opens that piece.
+let bol=-1;
+function fromHash(){const n=parseInt(location.hash.slice(1),10)-1;return bols[n]?n:0}
+addEventListener('hashchange',function(){const n=fromHash();if(n!==bol)setBol(n)});
 function setBol(i){
+bol=i;
+if(i||location.hash)location.replace('#'+(i+1));
 navBtns.forEach(function(b,j){b.setAttribute('aria-current',j===i)});
 el('mb-title').textContent=navBtns[i].textContent;
 openNav(false);
@@ -280,7 +285,7 @@ return '<button class="mb-chip" title="'+(hits.map(function(x){return HAND[x.han
 ph=-0.3;shown=-2;step=-1;
 hands.L.kf=keys('L');hands.R.kf=keys('R');
 chips=Array.from(chipBox.querySelectorAll('.mb-chip'));
-scrollTo(0,0);
+chipBox.scrollTop=0;
 draw(ph);
 }
 navBtns.forEach(function(b,j){b.onclick=function(){playing=!calm;sync();setBol(j)}});
@@ -324,7 +329,7 @@ draw(ph);
 }
 last=now;requestAnimationFrame(frame);
 }
-sync();setBol(0);requestAnimationFrame(frame);
+sync();setBol(fromHash());requestAnimationFrame(frame);
 })();
 </script>
 </body>
