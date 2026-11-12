@@ -7,7 +7,7 @@
 <!-- Link preview (WhatsApp etc.): the image URL must be absolute -->
 <meta property="og:title" content="Mridanga Bolvanis">
 <meta property="og:description" content="See which hand plays each stroke, bolvani by bolvani.">
-<meta property="og:image" content="https://asrajavel.github.io/mridanga-bolvanis/preview.png">
+<meta property="og:image" content="https://asrajavel.github.io/mridanga-bolvanis/preview.png?v=2">
 <meta property="og:url" content="https://asrajavel.github.io/mridanga-bolvanis/">
 <meta name="twitter:card" content="summary_large_image">
 <!-- Site icon, and the manifest that lets phones and Chrome install the page as an app -->
@@ -32,6 +32,7 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .mb-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .mb-top h1{margin:0;font-size:17px;font-weight:500;line-height:1.3}
 #mb-menu{display:none}
+#mb-share{margin-left:auto}
 /* Phone, upright or on its side: the list becomes a drawer that slides in from the left */
 @media (max-width:760px),(max-height:500px){
 #mb-menu{display:block}
@@ -69,7 +70,7 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .mb-h[data-p=fingers] .kf,.mb-h[data-p=three] .k3,.mb-h[data-p=one] .k1,.mb-h[data-p=thumb] .kt,.mb-h[data-p=hand] rect{fill:color-mix(in srgb,var(--kf) var(--ka),var(--surface-2));stroke:color-mix(in srgb,var(--ks) var(--ka),var(--text-secondary))}
 .mb-ctl{margin-top:8px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
 .mb-ctl input{flex:1;min-width:0}
-.mb-ctl svg{display:block;width:20px;height:20px;fill:currentColor}
+.mb-ctl svg,.mb-top svg{display:block;width:20px;height:20px;fill:currentColor}
 .mb-step{display:flex;gap:4px}
 .mb-ctl button:disabled{opacity:.35;cursor:default}
 </style>
@@ -83,6 +84,7 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 <div class="mb-top">
 <button id="mb-menu" aria-label="Bolvani list" aria-expanded="false">&#9776;</button>
 <h1 id="mb-title"></h1>
+<button id="mb-share" aria-label="Share this bolvani"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
 </div>
 <div class="mb-chips" id="mb-chips"></div>
 <div class="mb-stage">
@@ -314,6 +316,15 @@ btn.onclick=function(){if(playing&&step<0)step=Math.max(0,Math.floor(ph));playin
 // Picking one stroke repeats just that stroke; Play then carries on from it.
 function select(i){step=(i+L)%L;playing=false;ph=step-0.3;sync();draw(ph);}
 function cur(){return step>=0?step:Math.floor(ph)}
+// Share the piece on screen: its name, then its link. Always the public address, so it also works when the file is opened from disk.
+// Phones open their share sheet; where there is none (some desktop browsers) the name and link are copied instead.
+el('mb-share').onclick=function(){
+const b=this,text=el('mb-title').textContent,url='https://asrajavel.github.io/mridanga-bolvanis/mridanga-bolvanis.html#'+(bol+1);
+if(navigator.share)return navigator.share({text:text,url:url}).catch(function(){});
+navigator.clipboard.writeText(text+' '+url).then(function(){
+const h=b.innerHTML;b.textContent='Copied';setTimeout(function(){b.innerHTML=h},1500);
+},function(){prompt('Copy this link:',url)});
+};
 el('mb-prev').onclick=function(){select(Math.max(cur(),0)-1)};
 el('mb-next').onclick=function(){select(cur()+1)};
 chipBox.onclick=function(e){const c=e.target.closest('.mb-chip');if(c)select(chips.indexOf(c))};
