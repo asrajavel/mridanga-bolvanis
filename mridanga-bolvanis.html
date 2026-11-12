@@ -136,7 +136,7 @@ ghe:['Ghe',GHE],ghi:['Ghi',GHE],ga:['Ga',GHE],na:['Na',N1],
 de:['De',GHE,TE],dhi:['Dhi',GHE,T3],
 jha:['Jha',GHE,N1],da:['Da',GHE,N1],
 takhe:['Ta',KHE,TA],
-// From class 14 on: Te = 3 fingers, Re = index finger, Ta = 3 fingers open
+// Kaharwa: Te = 3 fingers, Re = index finger, Ta = 3 fingers open
 te3:['Te',T3],re1:['Re',hit('R','one',false,N)],ta3:['Ta',hit('R','three',true,F)],
 // The second Te of kaharwa (Da ghi te te) adds the left hand
 te1:['Te',KHE,hit('R','one',false,N)],
@@ -147,32 +147,32 @@ function jt(p){return p+' / '+p.replace(/jha/g,'takhe')}
 // [name in the list, strokes]; an entry with only a name is a heading. Add a line here for a new one.
 const BOLS=[
 ['Bolvanis'],
-['1. Te re khe ta','te-re khe-ta'],
-['2. Tere tere kheta','te-re te-re khe-ta'],
-['3. Tere kheta, tere tere kheta','te-re khe-ta / te-re te-re khe-ta'],
-['4. Tere tere tere kheta','te-re te-re te-re khe-ta'],
-['5. Tere tere kheta, tere kheta tere kheta','te-re te-re khe-ta / te-re khe-ta te-re khe-ta'],
-['6. Tere tere kheta takho','te-re te-re khe-ta ta-kho'],
-['7. Takho takho tere kheta','ta-kho ta-kho te-re khe-ta'],
-['8. Takho tere kheta ×2, tere kheta','ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta'],
-['9. Ghe te te','ghe te te'],
-['10. Kheta takho tere kheta','khe-ta ta-kho te-re khe-ta'],
-['11. Tere tere kheta, takho tere kheta','te-re te-re khe-ta / ta-kho te-re khe-ta'],
-['12. Takho takho takho, takho tere kheta','ta-kho ta-kho ta-kho / ta-kho te-re khe-ta'],
-['13. De re ghe na','de-re ghe-na'],
-['14. Tere ghena, dere ghena ×2, tere kheta','te-re ghe-na / de-re ghe-na / de-re ghe-na / te-re khe-ta'],
+['Te re khe ta','te-re khe-ta'],
+['Tere tere kheta','te-re te-re khe-ta'],
+['Tere kheta, tere tere kheta','te-re khe-ta / te-re te-re khe-ta'],
+['Tere tere tere kheta','te-re te-re te-re khe-ta'],
+['Tere tere kheta, tere kheta tere kheta','te-re te-re khe-ta / te-re khe-ta te-re khe-ta'],
+['Tere tere kheta takho','te-re te-re khe-ta ta-kho'],
+['Takho takho tere kheta','ta-kho ta-kho te-re khe-ta'],
+['Takho tere kheta ×2, tere kheta','ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta'],
+['Ghe te te','ghe te te'],
+['Kheta takho tere kheta','khe-ta ta-kho te-re khe-ta'],
+['Tere tere kheta, takho tere kheta','te-re te-re khe-ta / ta-kho te-re khe-ta'],
+['Takho takho takho, takho tere kheta','ta-kho ta-kho ta-kho / ta-kho te-re khe-ta'],
+['De re ghe na','de-re ghe-na'],
+['Tere ghena, dere ghena ×2, tere kheta','te-re ghe-na / de-re ghe-na / de-re ghe-na / te-re khe-ta'],
 ['Pench'],
-['Class 9 · Jha – tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta')],
-['Class 10 · adds takho takho tere kheta ×2',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta')],
-['Class 11 · adds tere kheta, tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta / te-re te-re khe-ta / ta-kho te-re khe-ta')],
-['Class 12 · Jha jha jha jha, tere kheta tere kheta',jt('jha jha jha jha / te-re khe-ta te-re khe-ta')],
-['Class 12 · Jha tere kheta ×2, tere kheta',jt('jha te-re khe-ta / jha te-re khe-ta / te-re khe-ta')],
-['Class 13 · Jha takho tere kheta',jt('jha ta-kho te-re khe-ta / ta-kho ta-kho / te-re khe-ta / ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta')],
-['Class 13 · Jha jha jha jha, tere tere tere tere',jt('jha jha jha jha / te-re te-re te-re te-re / khe-ta ta-kho te-re khe-ta / te-re khe-ta te-re khe-ta')],
+['Jha – tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta')],
+['Jha – tere tere kheta, takho takho tere kheta ×2',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta')],
+['Jha – tere tere kheta, tere kheta, tere tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta / te-re te-re khe-ta / ta-kho te-re khe-ta')],
+['Jha jha jha jha, tere kheta tere kheta',jt('jha jha jha jha / te-re khe-ta te-re khe-ta')],
+['Jha tere kheta ×2, tere kheta',jt('jha te-re khe-ta / jha te-re khe-ta / te-re khe-ta')],
+['Jha takho tere kheta',jt('jha ta-kho te-re khe-ta / ta-kho ta-kho / te-re khe-ta / ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta')],
+['Jha jha jha jha, tere tere tere tere',jt('jha jha jha jha / te-re te-re te-re te-re / khe-ta ta-kho te-re khe-ta / te-re khe-ta te-re khe-ta')],
 ['Kaharwa'],
-['Class 14 · Da ghi te te, na ga dhi na','da ghi te3 te1 / na ga dhi na'],
-['Class 16 · Tere kheta jha ×2, tere kheta','te3-re1 khe-ta3 jha / te3-re1 khe-ta3 jha / te3-re1 khe-ta3'],
-['Class 16 · Da ghi tere kheta, na ga dhi na','da ghi te3-re1 khe-ta3 / na ga dhi na']];
+['Da ghi te te, na ga dhi na','da ghi te3 te1 / na ga dhi na'],
+['Tere kheta jha ×2, tere kheta','te3-re1 khe-ta3 jha / te3-re1 khe-ta3 jha / te3-re1 khe-ta3'],
+['Da ghi tere kheta, na ga dhi na','da ghi te3-re1 khe-ta3 / na ga dhi na']];
 const bols=BOLS.filter(function(b){return b[1]});
 // step = the one stroke being repeated, or -1 when the whole bolvani runs
 let strokes=[],L=4,ph=-0.3,chips=[],shown=-2,step=-1;
@@ -257,7 +257,9 @@ r(p==='hand','x="6" y="14.5" width="19" height="14"')+r(p==='thumb'||p==='hand',
 }
 const LEG='<div class="mb-leg"><svg viewBox="0 0 12 12" aria-hidden="true"><rect class="kc" width="12" height="12" rx="3"/></svg>closed<svg viewBox="0 0 12 12" aria-hidden="true"><rect class="ko" x="1" y="1" width="10" height="10" rx="3"/></svg>open</div>';
 function openNav(on){document.body.classList.toggle('nav-open',on);menu.setAttribute('aria-expanded',on);}
-nav.innerHTML=BOLS.map(function(b){return b[1]?'<button>'+b[0]+'</button>':'<h2>'+b[0]+'</h2>'}).join('');
+let num=0;
+// Every piece gets its own number, the same one as in its #link
+nav.innerHTML=BOLS.map(function(b){return b[1]?'<button>'+(++num)+'. '+b[0].replace(/\b[a-z]/g,function(c){return c.toUpperCase()})+'</button>':'<h2>'+b[0]+'</h2>'}).join('');
 const navBtns=Array.from(nav.querySelectorAll('button'));
 // The address ends in #7 for the 7th piece in the list, so a link opens that piece.
 let bol=-1;
