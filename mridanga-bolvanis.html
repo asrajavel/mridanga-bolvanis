@@ -6,7 +6,6 @@
 <title>Mridanga Bolvanis</title>
 <!-- Link preview (WhatsApp etc.): the image URL must be absolute -->
 <meta property="og:title" content="Mridanga Bolvanis">
-<meta property="og:description" content="See which hand plays each stroke, bolvani by bolvani.">
 <meta property="og:image" content="https://asrajavel.github.io/mridanga-bolvanis/preview.png?v=2">
 <meta property="og:url" content="https://asrajavel.github.io/mridanga-bolvanis/">
 <meta name="twitter:card" content="summary_large_image">
@@ -320,8 +319,9 @@ function cur(){return step>=0?step:Math.floor(ph)}
 // Phones open their share sheet; where there is none (some desktop browsers) the name and link are copied instead.
 el('mb-share').onclick=function(){
 const b=this,text=el('mb-title').textContent,url='https://asrajavel.github.io/mridanga-bolvanis/mridanga-bolvanis.html#'+(bol+1);
-if(navigator.share)return navigator.share({text:text,url:url}).catch(function(){});
-navigator.clipboard.writeText(text+' '+url).then(function(){
+// The link goes inside the text, on its own line; passed separately, apps put it on the same line as the name
+if(navigator.share)return navigator.share({text:text+'\n'+url}).catch(function(){});
+navigator.clipboard.writeText(text+'\n'+url).then(function(){
 const h=b.innerHTML;b.textContent='Copied';setTimeout(function(){b.innerHTML=h},1500);
 },function(){prompt('Copy this link:',url)});
 };
