@@ -15,8 +15,6 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .mb-nav{box-sizing:border-box;flex:none;width:250px;height:100vh;position:sticky;top:0;overflow-y:auto;padding:12px 8px;background:var(--surface-1);border-right:1px solid var(--border)}
 .mb-nav button{display:block;width:100%;border:0;border-radius:var(--radius);padding:10px 12px;background:transparent;color:var(--text-primary);cursor:pointer;font:inherit;font-size:15px;line-height:1.35;text-align:left}
 .mb-nav button[aria-current=true]{background:var(--surface-2);font-weight:500}
-.mb-nav h2{margin:16px 12px 4px;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary)}
-.mb-nav h2:first-child{margin-top:4px}
 .mb-shade{display:none}
 .mb{box-sizing:border-box;flex:1;min-width:0;max-width:584px;height:100%;margin:0 auto;padding:12px;display:flex;flex-direction:column}
 .mb-top button,.mb-ctl button{background:var(--surface-2);border:1px solid var(--border-strong);border-radius:var(--radius);padding:0 10px;min-width:42px;min-height:42px;color:var(--text-primary);cursor:pointer;font:inherit;font-size:16px}
@@ -144,9 +142,8 @@ _:['–']};
 // Pench pieces are played twice: starting on Jha, then the same starting on Ta (right open + left closed).
 function jt(p){return p+' / '+p.replace(/jha/g,'takhe')}
 // One syllable per beat. Hyphens join syllables into a word, "/" starts a new line, "_" is a wait.
-// [name in the list, strokes]; an entry with only a name is a heading. Add a line here for a new one.
-const BOLS=[
-['Bolvanis'],
+// [name in the list, strokes]. Add a line here for a new one.
+const bols=[
 ['Te re khe ta','te-re khe-ta'],
 ['Tere tere kheta','te-re te-re khe-ta'],
 ['Tere kheta, tere tere kheta','te-re khe-ta / te-re te-re khe-ta'],
@@ -161,7 +158,6 @@ const BOLS=[
 ['Takho takho takho, takho tere kheta','ta-kho ta-kho ta-kho / ta-kho te-re khe-ta'],
 ['De re ghe na','de-re ghe-na'],
 ['Tere ghena, dere ghena ×2, tere kheta','te-re ghe-na / de-re ghe-na / de-re ghe-na / te-re khe-ta'],
-['Pench'],
 ['Jha – tere tere kheta, takho tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta')],
 ['Jha – tere tere kheta, takho takho tere kheta ×2',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta / ta-kho ta-kho te-re khe-ta')],
 ['Jha – tere tere kheta, tere kheta, tere tere kheta',jt('jha _ te-re te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta / te-re te-re khe-ta / ta-kho te-re khe-ta')],
@@ -169,11 +165,9 @@ const BOLS=[
 ['Jha tere kheta ×2, tere kheta',jt('jha te-re khe-ta / jha te-re khe-ta / te-re khe-ta')],
 ['Jha takho tere kheta',jt('jha ta-kho te-re khe-ta / ta-kho ta-kho / te-re khe-ta / ta-kho te-re khe-ta / ta-kho te-re khe-ta / te-re khe-ta')],
 ['Jha jha jha jha, tere tere tere tere',jt('jha jha jha jha / te-re te-re te-re te-re / khe-ta ta-kho te-re khe-ta / te-re khe-ta te-re khe-ta')],
-['Kaharwa'],
 ['Da ghi te te, na ga dhi na','da ghi te3 te1 / na ga dhi na'],
 ['Tere kheta jha ×2, tere kheta','te3-re1 khe-ta3 jha / te3-re1 khe-ta3 jha / te3-re1 khe-ta3'],
 ['Da ghi tere kheta, na ga dhi na','da ghi te3-re1 khe-ta3 / na ga dhi na']];
-const bols=BOLS.filter(function(b){return b[1]});
 // step = the one stroke being repeated, or -1 when the whole bolvani runs
 let strokes=[],L=4,ph=-0.3,chips=[],shown=-2,step=-1;
 // Closed: press and hold 0.3 beat, then lift slowly over 0.4 beat. Open: snap back in 0.12 beat.
@@ -257,9 +251,8 @@ r(p==='hand','x="6" y="14.5" width="19" height="14"')+r(p==='thumb'||p==='hand',
 }
 const LEG='<div class="mb-leg"><svg viewBox="0 0 12 12" aria-hidden="true"><rect class="kc" width="12" height="12" rx="3"/></svg>closed<svg viewBox="0 0 12 12" aria-hidden="true"><rect class="ko" x="1" y="1" width="10" height="10" rx="3"/></svg>open</div>';
 function openNav(on){document.body.classList.toggle('nav-open',on);menu.setAttribute('aria-expanded',on);}
-let num=0;
 // Every piece gets its own number, the same one as in its #link
-nav.innerHTML=BOLS.map(function(b){return b[1]?'<button>'+(++num)+'. '+b[0].replace(/\b[a-z]/g,function(c){return c.toUpperCase()})+'</button>':'<h2>'+b[0]+'</h2>'}).join('');
+nav.innerHTML=bols.map(function(b,i){return '<button>'+(i+1)+'. '+b[0].replace(/\b[a-z]/g,function(c){return c.toUpperCase()})+'</button>'}).join('');
 const navBtns=Array.from(nav.querySelectorAll('button'));
 // The address ends in #7 for the 7th piece in the list, so a link opens that piece.
 let bol=-1;
