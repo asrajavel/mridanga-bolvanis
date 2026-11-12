@@ -41,8 +41,11 @@ body{margin:0;background:var(--surface-2);color:var(--text-primary);font-family:
 .nav-open .mb-nav{visibility:visible;transform:none}
 .nav-open .mb-shade{display:block;position:fixed;inset:0;z-index:1;background:rgba(0,0,0,.4)}
 }
-.mb-chips{display:flex;flex-wrap:wrap;gap:6px 8px;flex:1;min-height:0;overflow-y:auto;align-content:flex-start;padding:1px}
+.mb-chips{display:flex;flex-wrap:wrap;gap:6px 8px;flex:1;min-height:0;overflow-y:auto;align-content:flex-start;padding:4px}
 .mb-word{display:flex;gap:3px}
+/* A phrase learnt in the first five pieces, boxed so it reads as one unit. The negative margin keeps its strokes in line with the unboxed rows */
+.mb-grp{display:flex;flex-wrap:wrap;gap:6px 8px;padding:2px;margin:-2px;border:2px solid var(--text-secondary);border-radius:12px;background:var(--surface-1)}
+.mb-grp .mb-chip:not(.on){background:var(--surface-2)}
 .mb-br{flex-basis:100%}
 .mb-leg{flex-basis:100%;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
 .mb-leg svg{width:12px;height:12px}
@@ -279,8 +282,10 @@ navBtns.forEach(function(b,j){b.setAttribute('aria-current',j===i)});
 el('mb-title').textContent=navBtns[i].textContent;
 openNav(false);
 strokes=[];L=0;
-chipBox.innerHTML=LEG+bols[i][1].split(' ').map(function(w){
+// In the 3rd piece and from the 5th on, "tere kheta" and "tere tere kheta" are known phrases and get a box around them
+chipBox.innerHTML=LEG+(i<4&&i!==2?bols[i][1]:bols[i][1].replace(/te-re te-re khe-ta|te-re khe-ta|te3-re1 khe-ta3/g,'[ $& ]')).split(' ').map(function(w){
 if(w==='/')return '<div class="mb-br"></div>';
+if(w==='['||w===']')return w==='['?'<div class="mb-grp">':'</div>';
 return '<div class="mb-word">'+w.split('-').map(function(k){
 const s=SYL[k];
 console.assert(s,'unknown syllable '+k);
